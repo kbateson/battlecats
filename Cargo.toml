@@ -3,4 +3,9 @@ name = "battlecats"
 version = "0.1.0"
 authors = ["Kristen Bateson <k.bateson@comcast.net>"]
 
+[[bin]]
+name = "battlecats"
+
 [dependencies]
+piston_window = "0.79.0"
+pistoncore-input = "0.20.0"
