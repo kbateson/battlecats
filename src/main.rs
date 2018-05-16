@@ -11,55 +11,27 @@ use opengl_graphics::{ GlGraphics, OpenGL };
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
-    player1: ColoredRect,
-    player2: ColoredRect
+    player1: Cat,
+    player2: Cat
 }
 
-struct ColoredRect {
+struct Cat {
     pub color: [f32; 4],
     pub position: [f64; 4],
-    velocity: [f64; 2]
+    pub stats: [f64; 5], // attack, spd, def, current health, total health
 }
 
-impl ColoredRect {
+impl Cat {
     fn new(color: [f32; 4], position: [f64; 4]) -> Self {
-        ColoredRect {
+        Cat {
             color: color,
             position: position,
-            velocity: [0.3, 0.3]
+            stats: [1.0, 1.0, 1.0, 10.0, 10.0]
         }
     }
 
-    fn update_color(color: f32)->f32 {
-        if color <= 0.0 {
-            1.0
-        } else {
-            color - 0.001
-        }
-    }
-
-    fn update(&mut self, size: (f64, f64)) {
-        self.color[0] = Self::update_color(self.color[0]);
-        self.color[1] = Self::update_color(self.color[1]);
-        self.color[2] = Self::update_color(self.color[2]);
-
-        // update X
-        if self.position[0] + self.position[2] >= size.0||
-           self.position[0] < 0.0 {
-            self.velocity[0] = -self.velocity[0];
-        }
-        self.position[0] += self.velocity[0];
-
-        // update Y
-        if self.position[1] + self.position[3] >= size.1||
-           self.position[1] < 0.0 {
-            self.velocity[1] = -self.velocity[1];
-        }
-        self.position[1] += self.velocity[1];
-    }
-
-    fn clone(&mut self) -> ColoredRect {
-        return ColoredRect::new(self.color, self.position);
+    fn clone(&mut self) -> Cat {
+        return Cat::new(self.color, self.position);
     }
     
 }
@@ -69,8 +41,8 @@ impl App {
         use graphics::*;
 
         const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
-        let square1: ColoredRect = self.player1.clone();
-        let square2: ColoredRect = self.player2.clone();
+        let square1: Cat = self.player1.clone();
+        let square2: Cat = self.player2.clone();
 
         self.gl.draw(args.viewport(), |c, gl| {
             // Clear the screen.
@@ -81,35 +53,30 @@ impl App {
         });
     }
 
-    fn update(&mut self, args: &UpdateArgs) {
-        // Rotate 2 radians per second.
-    }
-
     fn move_square(&mut self, args: &ButtonArgs) {
-        println!("Scancode {:?}", args.scancode);
-        match args.scancode {
-            Some(124) => {
+        match args.button {
+            Button::Keyboard(Key::Right) => {
                 self.player2.position[0] += 2.0;
             }
-            Some(123) => {
+            Button::Keyboard(Key::Left) => {
                 self.player2.position[0] -= 2.0;
             }
-            Some(125) => {
+            Button::Keyboard(Key::Down) => {
                 self.player2.position[1] += 2.0;
             }
-            Some(126) => {
+            Button::Keyboard(Key::Up) => {
                 self.player2.position[1] -= 2.0;
             }
-            Some(2) => {
+            Button::Keyboard(Key::D) => {
                 self.player1.position[0] += 2.0;
             }
-            Some(0) => {
+            Button::Keyboard(Key::A) => {
                 self.player1.position[0] -= 2.0;
             }
-            Some(1) => {
+            Button::Keyboard(Key::S) => {
                 self.player1.position[1] += 2.0;
             }
-            Some(13) => {
+            Button::Keyboard(Key::W) => {
                 self.player1.position[1] -= 2.0;
             }
             _ => {}
@@ -123,7 +90,7 @@ fn main() {
 
     // Create an Glutin window.
     let mut window: Window = WindowSettings::new(
-            "spinning-square",
+            "Mortal Tomcat",
             [200, 200]
         )
         .opengl(opengl)
@@ -134,18 +101,14 @@ fn main() {
     // Create a new game and run it.
     let mut app = App {
         gl: GlGraphics::new(opengl),
-        player1: ColoredRect::new([1.0, 0.0, 0.0, 1.0], [0.0, 0.0, 50.0, 50.0]),
-        player2: ColoredRect::new([0.0, 0.0, 1.0, 1.0], [50.0, 50.0, 50.0, 50.0])
+        player1: Cat::new([1.0, 0.0, 0.0, 1.0], [20.0, 75.0, 50.0, 50.0]),
+        player2: Cat::new([0.0, 0.0, 1.0, 1.0], [130.0, 75.0, 50.0, 50.0])
     };
 
     let mut events = Events::new(EventSettings::new());
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
             app.render(&r);
-        }
-
-        if let Some(u) = e.update_args() {
-            app.update(&u);
         }
 
         if let Some(b) = e.button_args() {
