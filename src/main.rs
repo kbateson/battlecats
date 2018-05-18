@@ -15,6 +15,12 @@ pub struct App {
     player2: Cat
 }
 
+pub struct Cattery {
+    Chester: Cat,
+    Gigabyte: Cat,
+    Frank: Cat
+}
+
 struct Cat {
     pub color: [f32; 4], // R G B brightness?
     pub position: [f64; 4], // x, y, width, height
@@ -40,7 +46,7 @@ impl Cat {
 
     fn move_cat(&mut self) {
         // left
-        if self.movement[0] && self.position[0] >= self.position[2] {
+        if self.movement[0] && self.position[0] >= 0.0 {
             self.stance[0] = false;
             self.position[0] -= self.stats[1];
         }
@@ -176,8 +182,8 @@ fn main() {
     // Create a new game and run it.
     let mut app = App {
         gl: GlGraphics::new(opengl),
-        player1: Cat::new([1.0, 0.0, 0.0, 1.0], [20.0, 75.0, 50.0, 50.0], [2.0, 0.5, 1.0, 10.0, 10.0]),
-        player2: Cat::new([0.0, 0.0, 1.0, 1.0], [130.0, 75.0, 50.0, 50.0], [1.0, 2.0, 0.5, 10.0, 10.0])
+        player1: Cat::new([0.57, 0.40, 0.18, 1.0], [20.0, 75.0, 50.0, 50.0], [2.0, 0.5, 1.0, 10.0, 10.0]),
+        player2: Cat::new([0.12, 0.12, 0.12, 1.0], [130.0, 75.0, 50.0, 50.0], [1.0, 2.0, 0.5, 10.0, 10.0])
     };
 
     let mut events = Events::new(EventSettings::new());
