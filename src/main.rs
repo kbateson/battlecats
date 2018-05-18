@@ -19,7 +19,8 @@ struct Cat {
     pub color: [f32; 4], // R G B brightness?
     pub position: [f64; 4], // x, y, width, height
     pub stats: [f64; 5], // attack, spd, def, current health, total health
-    pub movement: [bool; 4] // up, down, left, right
+    pub movement: [bool; 4], // left, right, crouch, jump
+    pub stance: [bool; 4] // stand, attack, defend, injured
 }
 
 impl Cat {
@@ -28,7 +29,8 @@ impl Cat {
             color: color,
             position: position,
             stats: stats,
-            movement: [false, false, false, false]
+            movement: [false, false, false, false],
+            stance: [true, false, false, false]
         }
     }
 
@@ -37,17 +39,39 @@ impl Cat {
     }
 
     fn move_cat(&mut self) {
-        if self.movement[0] {
-            self.position[1] -= self.stats[1];
-        }
-        if self.movement[1] {
-            self.position[1] += self.stats[1];
-        }
-        if self.movement[2] {
+        // left
+        if self.movement[0] && self.position[0] >= self.position[2] {
+            self.stance[0] = false;
             self.position[0] -= self.stats[1];
         }
-        if self.movement[3] {
+
+        //right
+        if self.movement[1] && self.position[0] <= (400.0 - self.position[2]) {
+            self.stance[0] = false;
             self.position[0] += self.stats[1];
+        }
+
+        // jump rise
+        if self.movement[3] {
+            if self.position[1] > 25.0 {
+                self.position[1] -= self.stats[1];
+            } else {
+                self.movement[3] = false;
+            }
+        }
+        // jump fall
+        if !self.movement[3] && self.position[1] < 75.0 {
+            self.position[1] += self.stats[1];
+        }
+
+        // crouch
+        if self.movement[2] && self.position[3] >= 25.0 {
+            self.position[3] -= self.stats[1];
+            self.position[1] += self.stats[1];
+        }
+        if !self.movement[2] && self.position[3] < 50.0 {
+            self.position[3] += self.stats[1];
+            self.position[1] -= self.stats[1];
         }
     }
 }
@@ -72,28 +96,28 @@ impl App {
     fn input(&mut self, args: &ButtonArgs) {
         match args.button {
             Button::Keyboard(Key::Right) => {
-                self.player2.movement[3] = true;
-            }
-            Button::Keyboard(Key::Left) => {
-                self.player2.movement[2] = true;
-            }
-            Button::Keyboard(Key::Down) => {
                 self.player2.movement[1] = true;
             }
-            Button::Keyboard(Key::Up) => {
+            Button::Keyboard(Key::Left) => {
                 self.player2.movement[0] = true;
             }
+            Button::Keyboard(Key::Down) => {
+                self.player2.movement[2] = true;
+            }
+            Button::Keyboard(Key::Up) => {
+                self.player2.movement[3] = true;
+            }
             Button::Keyboard(Key::D) => {
-                self.player1.movement[3] = true;
-            }
-            Button::Keyboard(Key::A) => {
-                self.player1.movement[2] = true;
-            }
-            Button::Keyboard(Key::S) => {
                 self.player1.movement[1] = true;
             }
-            Button::Keyboard(Key::W) => {
+            Button::Keyboard(Key::A) => {
                 self.player1.movement[0] = true;
+            }
+            Button::Keyboard(Key::S) => {
+                self.player1.movement[2] = true;
+            }
+            Button::Keyboard(Key::W) => {
+                self.player1.movement[3] = true;
             }
             _ => {}
         }
@@ -102,34 +126,34 @@ impl App {
     fn release(&mut self, args: &ButtonArgs) {
         match args.button {
             Button::Keyboard(Key::Right) => {
-                self.player2.movement[3] = false;
-            }
-            Button::Keyboard(Key::Left) => {
-                self.player2.movement[2] = false;
-            }
-            Button::Keyboard(Key::Down) => {
                 self.player2.movement[1] = false;
             }
-            Button::Keyboard(Key::Up) => {
+            Button::Keyboard(Key::Left) => {
                 self.player2.movement[0] = false;
             }
+            Button::Keyboard(Key::Down) => {
+                self.player2.movement[2] = false;
+            }
+            Button::Keyboard(Key::Up) => {
+                self.player2.movement[3] = false;
+            }
             Button::Keyboard(Key::D) => {
-                self.player1.movement[3] = false;
-            }
-            Button::Keyboard(Key::A) => {
-                self.player1.movement[2] = false;
-            }
-            Button::Keyboard(Key::S) => {
                 self.player1.movement[1] = false;
             }
-            Button::Keyboard(Key::W) => {
+            Button::Keyboard(Key::A) => {
                 self.player1.movement[0] = false;
+            }
+            Button::Keyboard(Key::S) => {
+                self.player1.movement[2] = false;
+            }
+            Button::Keyboard(Key::W) => {
+                self.player1.movement[3] = false;
             }
             _ => {}
         }
     }
 
-    fn update(&mut self, args: &UpdateArgs) {
+    fn update(&mut self) {
         self.player1.move_cat();
         self.player2.move_cat();
     }
@@ -142,7 +166,7 @@ fn main() {
     // Create an Glutin window.
     let mut window: Window = WindowSettings::new(
             "Mortal Tomcat",
-            [200, 200]
+            [400, 200]
         )
         .opengl(opengl)
         .exit_on_esc(true)
@@ -173,8 +197,8 @@ fn main() {
             }
         }
 
-        if let Some(u) = e.update_args() {
-            app.update(&u);
+        if let Some(_u) = e.update_args() {
+            app.update();
         }
     }
 }
