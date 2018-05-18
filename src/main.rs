@@ -16,8 +16,8 @@ pub struct App {
 }
 
 struct Cat {
-    pub color: [f32; 4],
-    pub position: [f64; 4], // x, y
+    pub color: [f32; 4], // R G B brightness?
+    pub position: [f64; 4], // x, y, width, height
     pub stats: [f64; 5], // attack, spd, def, current health, total health
     pub movement: [bool; 4] // up, down, left, right
 }
