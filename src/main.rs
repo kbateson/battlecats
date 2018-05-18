@@ -17,7 +17,7 @@ pub struct App {
 
 struct Cat {
     pub color: [f32; 4],
-    pub position: [f64; 4],
+    pub position: [f64; 4], // x, y
     pub stats: [f64; 5], // attack, spd, def, current health, total health
     pub movement: [bool; 4] // up, down, left, right
 }
@@ -35,7 +35,21 @@ impl Cat {
     fn clone(&mut self) -> Cat {
         return Cat::new(self.color, self.position, self.stats);
     }
-    
+
+    fn move_cat(&mut self) {
+        if self.movement[0] {
+            self.position[1] -= self.stats[1];
+        }
+        if self.movement[1] {
+            self.position[1] += self.stats[1];
+        }
+        if self.movement[2] {
+            self.position[0] -= self.stats[1];
+        }
+        if self.movement[3] {
+            self.position[0] += self.stats[1];
+        }
+    }
 }
 
 impl App {
@@ -116,6 +130,8 @@ impl App {
     }
 
     fn update(&mut self, args: &UpdateArgs) {
+        self.player1.move_cat();
+        self.player2.move_cat();
     }
 }
 
