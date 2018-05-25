@@ -3,92 +3,32 @@ extern crate graphics;
 extern crate glutin_window;
 extern crate opengl_graphics;
 
+mod cat;
+
 use piston::window::WindowSettings;
 use piston::event_loop::*;
 use piston::input::*;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{ GlGraphics, OpenGL };
+use cat::LeftCat;
+use cat::RightCat;
+use cat::Cat;
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
-    player1: Cat,
-    player2: Cat
+    player1: LeftCat,
+    player2: RightCat
 }
 
-pub struct Cattery {
-    Chester: Cat,
-    Gigabyte: Cat,
-    Frank: Cat
-}
 
-struct Cat {
-    pub color: [f32; 4], // R G B brightness?
-    pub position: [f64; 4], // x, y, width, height
-    pub stats: [f64; 5], // attack, spd, def, current health, total health
-    pub movement: [bool; 4], // left, right, crouch, jump
-    pub stance: [bool; 4] // stand, attack, defend, injured
-}
-
-impl Cat {
-    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5]) -> Self {
-        Cat {
-            color: color,
-            position: position,
-            stats: stats,
-            movement: [false, false, false, false],
-            stance: [true, false, false, false]
-        }
-    }
-
-    fn clone(&mut self) -> Cat {
-        return Cat::new(self.color, self.position, self.stats);
-    }
-
-    fn move_cat(&mut self) {
-        // left
-        if self.movement[0] && self.position[0] >= 0.0 {
-            self.stance[0] = false;
-            self.position[0] -= self.stats[1];
-        }
-
-        //right
-        if self.movement[1] && self.position[0] <= (400.0 - self.position[2]) {
-            self.stance[0] = false;
-            self.position[0] += self.stats[1];
-        }
-
-        // jump rise
-        if self.movement[3] {
-            if self.position[1] > 25.0 {
-                self.position[1] -= self.stats[1];
-            } else {
-                self.movement[3] = false;
-            }
-        }
-        // jump fall
-        if !self.movement[3] && self.position[1] < 75.0 {
-            self.position[1] += self.stats[1];
-        }
-
-        // crouch
-        if self.movement[2] && self.position[3] >= 25.0 {
-            self.position[3] -= self.stats[1];
-            self.position[1] += self.stats[1];
-        }
-        if !self.movement[2] && self.position[3] < 50.0 {
-            self.position[3] += self.stats[1];
-            self.position[1] -= self.stats[1];
-        }
-    }
-}
 
 impl App {
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
         const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
-        let square1: Cat = self.player1.clone();
-        let square2: Cat = self.player2.clone();
+        let square1: LeftCat = self.player1.clone();
+        let square2: RightCat = self.player2.clone();
 
         self.gl.draw(args.viewport(), |c, gl| {
             // Clear the screen.
@@ -160,8 +100,8 @@ impl App {
     }
 
     fn update(&mut self) {
-        self.player1.move_cat();
-        self.player2.move_cat();
+        self.player1.move_cat(self.player2.position[0]);
+        self.player2.move_cat(self.player1.position[0] + self.player1.position[2]);
     }
 }
 
@@ -182,8 +122,8 @@ fn main() {
     // Create a new game and run it.
     let mut app = App {
         gl: GlGraphics::new(opengl),
-        player1: Cat::new([0.57, 0.40, 0.18, 1.0], [20.0, 75.0, 50.0, 50.0], [2.0, 0.5, 1.0, 10.0, 10.0]),
-        player2: Cat::new([0.12, 0.12, 0.12, 1.0], [130.0, 75.0, 50.0, 50.0], [1.0, 2.0, 0.5, 10.0, 10.0])
+        player1: LeftCat::new([1.0, 0.0, 0.0, 1.0], [20.0, 75.0, 50.0, 50.0], [2.0, 0.5, 1.0, 10.0, 10.0]),
+        player2: RightCat::new([0.0, 0.0, 1.0, 1.0], [130.0, 75.0, 50.0, 50.0], [1.0, 2.0, 0.5, 10.0, 10.0])
     };
 
     let mut events = Events::new(EventSettings::new());
