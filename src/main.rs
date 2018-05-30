@@ -2,141 +2,26 @@ extern crate piston;
 extern crate graphics;
 extern crate glutin_window;
 extern crate opengl_graphics;
+extern crate sprite;
+extern crate find_folder;
+
+mod cat;
 
 use piston::window::WindowSettings;
 use piston::event_loop::*;
 use piston::input::*;
 use glutin_window::GlutinWindow as Window;
-use opengl_graphics::{ GlGraphics, OpenGL };
+use opengl_graphics::{ GlGraphics, OpenGL, Texture, TextureSettings };
+use cat::LeftCat;
+use cat::RightCat;
+use cat::Cat;
+use std::path::Path;
+use graphics::rectangle::square;
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
     player1: LeftCat,
     player2: RightCat
-}
-
-struct LeftCat {
-    pub color: [f32; 4], // R G B brightness?
-    pub position: [f64; 4], // x, y, width, height
-    pub stats: [f64; 5], // attack, spd, def, current health, total health
-    pub movement: [bool; 4], // left, right, crouch, jump
-    pub stance: [bool; 4] // stand, attack, defend, injured
-}
-
-struct RightCat {
-    pub color: [f32; 4], // R G B brightness?
-    pub position: [f64; 4], // x, y, width, height
-    pub stats: [f64; 5], // attack, spd, def, current health, total health
-    pub movement: [bool; 4], // left, right, crouch, jump
-    pub stance: [bool; 4] // stand, attack, defend, injured
-}
-
-trait Cat {
-    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5]) -> Self;
-    fn clone(&mut self) -> Self;
-    fn move_cat(&mut self, position: f64);
-}
-
-impl Cat for LeftCat {
-    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5]) -> Self {
-        LeftCat {
-            color: color,
-            position: position,
-            stats: stats,
-            movement: [false, false, false, false],
-            stance: [true, false, false, false]
-        }
-    }
-    fn clone(&mut self) -> LeftCat {
-        return LeftCat::new(self.color, self.position, self.stats);
-    }
-    fn move_cat(&mut self, other_cat: f64) {
-        // left
-        if self.movement[0] && self.position[0] >= 0.0 {
-            self.stance[0] = false;
-            self.position[0] -= self.stats[1];
-        }
-
-        //right
-        if self.movement[1] && self.position[0] <= (400.0 - self.position[2]) && (self.position[0] + self.position[2]) <= other_cat {
-            self.stance[0] = false;
-            self.position[0] += self.stats[1];
-        }
-
-        // jump rise
-        if self.movement[3] {
-            if self.position[1] > 25.0 {
-                self.position[1] -= self.stats[1];
-            } else {
-                self.movement[3] = false;
-            }
-        }
-        // jump fall
-        if !self.movement[3] && self.position[1] < 75.0 {
-            self.position[1] += self.stats[1];
-        }
-
-        // crouch
-        if self.movement[2] && self.position[3] >= 25.0 {
-            self.position[3] -= self.stats[1];
-            self.position[1] += self.stats[1];
-        }
-        if !self.movement[2] && self.position[3] < 50.0 {
-            self.position[3] += self.stats[1];
-            self.position[1] -= self.stats[1];
-        }
-    }
-}
-
-impl Cat for RightCat {
-    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5]) -> Self {
-        RightCat {
-            color: color,
-            position: position,
-            stats: stats,
-            movement: [false, false, false, false],
-            stance: [true, false, false, false]
-        }
-    }
-    fn clone(&mut self) -> RightCat {
-        return RightCat::new(self.color, self.position, self.stats);
-    }
-    fn move_cat(&mut self, other_cat: f64) {
-        // left
-        if self.movement[0] && self.position[0] >= 0.0 && self.position[0] >= other_cat {
-            self.stance[0] = false;
-            self.position[0] -= self.stats[1];
-        }
-
-        //right
-        if self.movement[1] && self.position[0] <= (400.0 - self.position[2]) {
-            self.stance[0] = false;
-            self.position[0] += self.stats[1];
-        }
-
-        // jump rise
-        if self.movement[3] {
-            if self.position[1] > 25.0 {
-                self.position[1] -= self.stats[1];
-            } else {
-                self.movement[3] = false;
-            }
-        }
-        // jump fall
-        if !self.movement[3] && self.position[1] < 75.0 {
-            self.position[1] += self.stats[1];
-        }
-
-        // crouch
-        if self.movement[2] && self.position[3] >= 25.0 {
-            self.position[3] -= self.stats[1];
-            self.position[1] += self.stats[1];
-        }
-        if !self.movement[2] && self.position[3] < 50.0 {
-            self.position[3] += self.stats[1];
-            self.position[1] -= self.stats[1];
-        }
-    }
 }
 
 impl App {
@@ -146,18 +31,28 @@ impl App {
         const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
         let square1: LeftCat = self.player1.clone();
         let square2: RightCat = self.player2.clone();
+        let chester: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/chester.gif"), &TextureSettings::new()).unwrap();
+        let gigabyte: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/gigabyte.gif"), &TextureSettings::new()).unwrap();
+
 
         self.gl.draw(args.viewport(), |c, gl| {
             // Clear the screen.
             clear(GREEN, gl);
             // Draw a box rotating around the middle of the screen.
-            rectangle(square1.color, square1.position, c.transform, gl);
-            rectangle(square2.color, square2.position, c.transform, gl);
+            let chester_box = Image::new().rect(square(square1.position[0], square1.position[1], 100.0));
+            let gigs_box = Image::new().rect(square(square2.position[0], square2.position[1], 100.0));
+
+            gigs_box.draw(&gigabyte, &DrawState::default(), c.transform, gl);
+            chester_box.draw(&chester, &DrawState::default(), c.transform, gl);
         });
     }
 
     fn input(&mut self, args: &ButtonArgs) {
         match args.button {
+            Button::Keyboard(Key::Return) => {
+                self.player2.attack(self.player1.position[0] + self.player1.position[2]);
+                self.player1.attacked(self.player2.stance[1], self.player2.stats[0]);
+            }
             Button::Keyboard(Key::Right) => {
                 self.player2.movement[1] = true;
             }
@@ -169,6 +64,10 @@ impl App {
             }
             Button::Keyboard(Key::Up) => {
                 self.player2.movement[3] = true;
+            }
+            Button::Keyboard(Key::Space) => {
+                self.player1.attack(self.player2.position[0]);
+                self.player2.attacked(self.player1.stance[1], self.player1.stats[0]);
             }
             Button::Keyboard(Key::D) => {
                 self.player1.movement[1] = true;
@@ -188,6 +87,9 @@ impl App {
 
     fn release(&mut self, args: &ButtonArgs) {
         match args.button {
+            Button::Keyboard(Key::Return) => {
+                self.player2.stance[1] = false;
+            }
             Button::Keyboard(Key::Right) => {
                 self.player2.movement[1] = false;
             }
@@ -199,6 +101,9 @@ impl App {
             }
             Button::Keyboard(Key::Up) => {
                 self.player2.movement[3] = false;
+            }
+            Button::Keyboard(Key::Space) => {
+                self.player1.stance[1] = false;
             }
             Button::Keyboard(Key::D) => {
                 self.player1.movement[1] = false;
