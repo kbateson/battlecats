@@ -20,8 +20,6 @@ pub struct App {
     player2: RightCat
 }
 
-
-
 impl App {
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
@@ -41,6 +39,10 @@ impl App {
 
     fn input(&mut self, args: &ButtonArgs) {
         match args.button {
+            Button::Keyboard(Key::Return) => {
+                self.player2.attack(self.player1.position[0] + self.player1.position[2]);
+                self.player1.attacked(self.player2.stance[1], self.player2.stats[0]);
+            }
             Button::Keyboard(Key::Right) => {
                 self.player2.movement[1] = true;
             }
@@ -52,6 +54,10 @@ impl App {
             }
             Button::Keyboard(Key::Up) => {
                 self.player2.movement[3] = true;
+            }
+            Button::Keyboard(Key::Space) => {
+                self.player1.attack(self.player2.position[0]);
+                self.player2.attacked(self.player1.stance[1], self.player1.stats[0]);
             }
             Button::Keyboard(Key::D) => {
                 self.player1.movement[1] = true;
@@ -71,6 +77,9 @@ impl App {
 
     fn release(&mut self, args: &ButtonArgs) {
         match args.button {
+            Button::Keyboard(Key::Return) => {
+                self.player2.stance[1] = false;
+            }
             Button::Keyboard(Key::Right) => {
                 self.player2.movement[1] = false;
             }
@@ -82,6 +91,9 @@ impl App {
             }
             Button::Keyboard(Key::Up) => {
                 self.player2.movement[3] = false;
+            }
+            Button::Keyboard(Key::Space) => {
+                self.player1.stance[1] = false;
             }
             Button::Keyboard(Key::D) => {
                 self.player1.movement[1] = false;
