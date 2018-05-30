@@ -3,7 +3,7 @@ pub struct LeftCat {
     pub position: [f64; 4], // x, y, width, height
     pub stats: [f64; 5], // attack, spd, def, current health, total health
     pub movement: [bool; 4], // left, right, crouch, jump
-    pub stance: [bool; 4] // stand, attack, defend, injured
+    pub stance: [bool; 4], // stand, attack, defend, injured
 }
 
 pub struct RightCat {
@@ -11,7 +11,7 @@ pub struct RightCat {
     pub position: [f64; 4], // x, y, width, height
     pub stats: [f64; 5], // attack, spd, def, current health, total health
     pub movement: [bool; 4], // left, right, crouch, jump
-    pub stance: [bool; 4] // stand, attack, defend, injured
+    pub stance: [bool; 4], // stand, attack, defend, injured
 }
 
 pub trait Cat {

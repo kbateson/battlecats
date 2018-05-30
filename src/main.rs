@@ -2,6 +2,8 @@ extern crate piston;
 extern crate graphics;
 extern crate glutin_window;
 extern crate opengl_graphics;
+extern crate sprite;
+extern crate find_folder;
 
 mod cat;
 
@@ -9,10 +11,12 @@ use piston::window::WindowSettings;
 use piston::event_loop::*;
 use piston::input::*;
 use glutin_window::GlutinWindow as Window;
-use opengl_graphics::{ GlGraphics, OpenGL };
+use opengl_graphics::{ GlGraphics, OpenGL, Texture, TextureSettings };
 use cat::LeftCat;
 use cat::RightCat;
 use cat::Cat;
+use std::path::Path;
+use graphics::rectangle::square;
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
@@ -29,13 +33,19 @@ impl App {
         const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
         let square1: LeftCat = self.player1.clone();
         let square2: RightCat = self.player2.clone();
+        let chester: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/chester.gif"), &TextureSettings::new()).unwrap();
+        let gigabyte: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/gigabyte.gif"), &TextureSettings::new()).unwrap();
+
 
         self.gl.draw(args.viewport(), |c, gl| {
             // Clear the screen.
             clear(GREEN, gl);
             // Draw a box rotating around the middle of the screen.
-            rectangle(square1.color, square1.position, c.transform, gl);
-            rectangle(square2.color, square2.position, c.transform, gl);
+            let chester_box = Image::new().rect(square(square1.position[0], square1.position[1], 100.0));
+            let gigs_box = Image::new().rect(square(square2.position[0], square2.position[1], 100.0));
+
+            gigs_box.draw(&gigabyte, &DrawState::default(), c.transform, gl);
+            chester_box.draw(&chester, &DrawState::default(), c.transform, gl);
         });
     }
 
