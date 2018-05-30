@@ -32,7 +32,10 @@ impl App {
         let square1: LeftCat = self.player1.clone();
         let square2: RightCat = self.player2.clone();
         let chester: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/chester.gif"), &TextureSettings::new()).unwrap();
+        let chester_paw: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/chesterpaw.gif"), &TextureSettings::new()).unwrap();
         let gigabyte: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/gigabyte.gif"), &TextureSettings::new()).unwrap();
+        let gigabyte_paw: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/gigabytepaw.gif"), &TextureSettings::new()).unwrap();
+        
 
 
         self.gl.draw(args.viewport(), |c, gl| {
@@ -40,9 +43,13 @@ impl App {
             clear(GREEN, gl);
             // Draw a box rotating around the middle of the screen.
             let chester_box = Image::new().rect(square(square1.position[0], square1.position[1], 100.0));
+            let chester_box_paw = Image::new().rect([square1.position[0]+45.0, square1.position[1]+72.0, 70.0, 20.0]);
             let gigs_box = Image::new().rect(square(square2.position[0], square2.position[1], 100.0));
+            let gigs_box_paw = Image::new().rect([square2.position[0]-15.0, square2.position[1]+72.0, 70.0, 20.0]);
 
+            gigs_box_paw.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
             gigs_box.draw(&gigabyte, &DrawState::default(), c.transform, gl);
+            chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
             chester_box.draw(&chester, &DrawState::default(), c.transform, gl);
         });
     }
