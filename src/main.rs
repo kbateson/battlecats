@@ -31,10 +31,10 @@ impl App {
         const GREEN: [f32; 4] = [0.07, 0.3, 0.12, 1.0];
         let square1: LeftCat = self.player1.clone();
         let square2: RightCat = self.player2.clone();
-        let chester: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/chester.gif"), &TextureSettings::new()).unwrap();
-        let chester_paw: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/chesterpaw.gif"), &TextureSettings::new()).unwrap();
-        let gigabyte: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/gigabyte.gif"), &TextureSettings::new()).unwrap();
-        let gigabyte_paw: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/gigabytepaw.gif"), &TextureSettings::new()).unwrap();
+        let chester: Texture = Texture::from_path(Path::new("/Users/hayley/Projects/battlecats/src/imgs/chester.gif"), &TextureSettings::new()).unwrap();
+        let chester_paw: Texture = Texture::from_path(Path::new("/Users/hayley/Projects/battlecats/src/imgs/chesterpaw.gif"), &TextureSettings::new()).unwrap();
+        let gigabyte: Texture = Texture::from_path(Path::new("/Users/hayley/Projects/battlecats/src/imgs/gigabyte.gif"), &TextureSettings::new()).unwrap();
+        let gigabyte_paw: Texture = Texture::from_path(Path::new("/Users/hayley/Projects/battlecats/src/imgs/gigabytepaw.gif"), &TextureSettings::new()).unwrap();
         
 
 
@@ -56,23 +56,31 @@ impl App {
 
     fn input(&mut self, args: &ButtonArgs) {
         match args.button {
-            Button::Keyboard(Key::Return) => {
+            Button::Keyboard(Key::O) => {
+                self.player2.hiss(self.player1.position[0] + self.player1.position[2]);
+                self.player1.hissed(self.player2.stance[4]);
+            }
+            Button::Keyboard(Key::E) =>{
+                self.player1.hiss(self.player2.position[0]);
+                self.player2.hissed(self.player1.stance[4]);
+            }
+            Button::Keyboard(Key::U) => {
                 self.player2.attack(self.player1.position[0] + self.player1.position[2]);
                 self.player1.attacked(self.player2.stance[1], self.player2.stats[0]);
             }
-            Button::Keyboard(Key::Right) => {
+            Button::Keyboard(Key::L) => {
                 self.player2.movement[1] = true;
             }
-            Button::Keyboard(Key::Left) => {
+            Button::Keyboard(Key::J) => {
                 self.player2.movement[0] = true;
             }
-            Button::Keyboard(Key::Down) => {
+            Button::Keyboard(Key::K) => {
                 self.player2.movement[2] = true;
             }
-            Button::Keyboard(Key::Up) => {
+            Button::Keyboard(Key::I) => {
                 self.player2.movement[3] = true;
             }
-            Button::Keyboard(Key::Space) => {
+            Button::Keyboard(Key::Q) => {
                 self.player1.attack(self.player2.position[0]);
                 self.player2.attacked(self.player1.stance[1], self.player1.stats[0]);
             }
@@ -94,22 +102,28 @@ impl App {
 
     fn release(&mut self, args: &ButtonArgs) {
         match args.button {
-            Button::Keyboard(Key::Return) => {
+            Button::Keyboard(Key::O) => {
+                self.player2.stance[4] = false;
+            }
+            Button::Keyboard(Key::E) =>{
+                self.player1.stance[4] = false;
+            }
+            Button::Keyboard(Key::U) => {
                 self.player2.stance[1] = false;
             }
-            Button::Keyboard(Key::Right) => {
+            Button::Keyboard(Key::L) => {
                 self.player2.movement[1] = false;
             }
-            Button::Keyboard(Key::Left) => {
+            Button::Keyboard(Key::J) => {
                 self.player2.movement[0] = false;
             }
-            Button::Keyboard(Key::Down) => {
+            Button::Keyboard(Key::K) => {
                 self.player2.movement[2] = false;
             }
-            Button::Keyboard(Key::Up) => {
+            Button::Keyboard(Key::I) => {
                 self.player2.movement[3] = false;
             }
-            Button::Keyboard(Key::Space) => {
+            Button::Keyboard(Key::Q) => {
                 self.player1.stance[1] = false;
             }
             Button::Keyboard(Key::D) => {
