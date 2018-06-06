@@ -97,16 +97,16 @@ impl App {
                 let damage = 100.0 - (10.0 * self.player1.attacked(self.player2.stance[1], self.player2.stats[0]));
                 self.hud.update(damage, health);
             }
-            Button::Keyboard(Key::Right) => {
+            Button::Keyboard(Key::L) => {
                 self.player2.movement[1] = true;
             }
-            Button::Keyboard(Key::Left) => {
+            Button::Keyboard(Key::J) => {
                 self.player2.movement[0] = true;
             }
-            Button::Keyboard(Key::Down) => {
+            Button::Keyboard(Key::K) => {
                 self.player2.movement[2] = true;
             }
-            Button::Keyboard(Key::Up) => {
+            Button::Keyboard(Key::I) => {
                 self.player2.movement[3] = true;
             }
             Button::Keyboard(Key::Space) => {
@@ -135,16 +135,16 @@ impl App {
             Button::Keyboard(Key::Return) => {
                 self.player2.stance[1] = false;
             }
-            Button::Keyboard(Key::Right) => {
+            Button::Keyboard(Key::L) => {
                 self.player2.movement[1] = false;
             }
-            Button::Keyboard(Key::Left) => {
+            Button::Keyboard(Key::J) => {
                 self.player2.movement[0] = false;
             }
-            Button::Keyboard(Key::Down) => {
+            Button::Keyboard(Key::K) => {
                 self.player2.movement[2] = false;
             }
-            Button::Keyboard(Key::Up) => {
+            Button::Keyboard(Key::I) => {
                 self.player2.movement[3] = false;
             }
             Button::Keyboard(Key::Space) => {
