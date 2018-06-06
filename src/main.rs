@@ -81,7 +81,7 @@ impl App {
                 winner = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/rwin.png"), &TextureSettings::new()).unwrap();
             }
 
-            let winner_box = Image::new().rect([0.0, 25.0, 500.0, 150.0]);
+            let winner_box = Image::new().rect([150.0, 125.0, 500.0, 150.0]);
             self.gl.draw(args.viewport(), |c, gl| {
                 // Clear the screen.
                 clear(BLACK, gl);
@@ -101,8 +101,9 @@ impl App {
                 self.player2.hissed(self.player1.stance[4]);
             }
             Button::Keyboard(Key::U) => {
-                self.player2.attack(self.player1.position[0] + self.player1.position[2]);
-                self.player1.attacked(self.player2.stance[1], self.player2.stats[0]);
+                let damage = 100.0 - (10.0 * self.player2.attack(self.player1.position[0] + self.player1.position[2]));
+                let health = 100.0 - (10.0 * self.player1.attacked(self.player2.stance[1], self.player2.stats[0]));
+                self.hud.update(health, damage);
             }
             Button::Keyboard(Key::L) => {
                 self.player2.movement[1] = true;
@@ -117,8 +118,8 @@ impl App {
                 self.player2.movement[3] = true;
             }
             Button::Keyboard(Key::Q) => {
-                let health = 100.0 - (10.0 * self.player1.attack(self.player2.position[0]));
-                let damage = 100.0 - (10.0 * self.player2.attacked(self.player1.stance[1], self.player1.stats[0]));
+                let damage = 100.0 - (10.0 * self.player1.attack(self.player2.position[0] + self.player2.position[2]));
+                let health = 100.0 - (10.0 * self.player2.attacked(self.player1.stance[1], self.player1.stats[0]));
                 self.hud.update(health, damage);
             }
             Button::Keyboard(Key::D) => {
@@ -192,7 +193,7 @@ fn main() {
     // Create an Glutin window.
     let mut window: Window = WindowSettings::new(
             "Mortal Tomcat",
-            [500, 200]
+            [800, 400]
         )
         .opengl(opengl)
         .exit_on_esc(true)
@@ -202,8 +203,8 @@ fn main() {
     // Create a new game and run it.
     let mut app = App {
         gl: GlGraphics::new(opengl),
-        player1: LeftCat::new([1.0, 0.0, 0.0, 1.0], [20.0, 75.0, 50.0, 50.0], [2.0, 0.5, 1.0, 10.0, 10.0]),
-        player2: RightCat::new([0.0, 0.0, 1.0, 1.0], [410.0, 75.0, 50.0, 50.0], [1.0, 2.0, 0.5, 10.0, 10.0]),
+        player1: LeftCat::new([1.0, 0.0, 0.0, 1.0], [105.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0]),
+        player2: RightCat::new([0.0, 0.0, 1.0, 1.0], [595.0, 200.0, 50.0, 50.0], [1.0, 2.0, 0.75, 10.0, 10.0]),
         hud: HUD::new()
     };
 

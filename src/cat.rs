@@ -72,30 +72,30 @@ impl Cat for LeftCat {
             self.position[0] -= self.stats[1];
         }
         //right
-        if self.movement[1] && self.position[0] <= (400.0 - self.position[2]) && (self.position[0] + self.position[2] + 30.0) <= other_cat {
+        if self.movement[1] && self.position[0] <= (750.0 - self.position[2]) && (self.position[0] + self.position[2] + 30.0) <= other_cat {
             self.stance[0] = false;
             self.position[0] += self.stats[1];
         }
 
         // jump rise
         if self.movement[3] {
-            if self.position[1] > 25.0 {
+            if self.position[1] > 145.0 {
                 self.position[1] -= self.stats[1];
             } else {
                 self.movement[3] = false;
             }
         }
         // jump fall
-        if !self.movement[3] && self.position[1] < 75.0 {
+        if !self.movement[3] && self.position[1] < 200.0 {
             self.position[1] += self.stats[1];
         }
 
         // crouch
-        if self.movement[2] && self.position[3] >= 25.0 {
+        if self.movement[2] && self.position[3] >= 145.0 {
             self.position[3] -= self.stats[1];
             self.position[1] += self.stats[1];
         }
-        if !self.movement[2] && self.position[3] < 50.0 {
+        if !self.movement[2] && self.position[3] < 200.0 {
             self.position[3] += self.stats[1];
             self.position[1] -= self.stats[1];
         }
@@ -159,30 +159,30 @@ impl Cat for RightCat {
         }
 
         //right
-        if self.movement[1] && self.position[0] <= (400.0 - self.position[2]) {
+        if self.movement[1] && self.position[0] <= (750.0 - self.position[2]) {
             self.stance[0] = false;
             self.position[0] += self.stats[1];
         }
 
         // jump rise
         if self.movement[3] {
-            if self.position[1] > 25.0 {
+            if self.position[1] > 145.0 {
                 self.position[1] -= self.stats[1];
             } else {
                 self.movement[3] = false;
             }
         }
         // jump fall
-        if !self.movement[3] && self.position[1] < 75.0 {
+        if !self.movement[3] && self.position[1] < 200.0 {
             self.position[1] += self.stats[1];
         }
 
         // crouch
-        if self.movement[2] && self.position[3] >= 25.0 {
+        if self.movement[2] && self.position[3] >= 145.0 {
             self.position[3] -= self.stats[1];
             self.position[1] += self.stats[1];
         }
-        if !self.movement[2] && self.position[3] < 50.0 {
+        if !self.movement[2] && self.position[3] < 200.0 {
             self.position[3] += self.stats[1];
             self.position[1] -= self.stats[1];
         }
