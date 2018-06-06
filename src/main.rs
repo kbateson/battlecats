@@ -92,10 +92,17 @@ impl App {
 
     fn input(&mut self, args: &ButtonArgs) {
         match args.button {
-            Button::Keyboard(Key::Return) => {
-                let health = 100.0 - (10.0 * self.player2.attack(self.player1.position[0] + self.player1.position[2]));
-                let damage = 100.0 - (10.0 * self.player1.attacked(self.player2.stance[1], self.player2.stats[0]));
-                self.hud.update(damage, health);
+            Button::Keyboard(Key::O) => {
+                self.player2.hiss(self.player1.position[0] + self.player1.position[2]);
+                self.player1.hissed(self.player2.stance[4]);
+            }
+            Button::Keyboard(Key::E) =>{
+                self.player1.hiss(self.player2.position[0]);
+                self.player2.hissed(self.player1.stance[4]);
+            }
+            Button::Keyboard(Key::U) => {
+                self.player2.attack(self.player1.position[0] + self.player1.position[2]);
+                self.player1.attacked(self.player2.stance[1], self.player2.stats[0]);
             }
             Button::Keyboard(Key::L) => {
                 self.player2.movement[1] = true;
@@ -109,7 +116,7 @@ impl App {
             Button::Keyboard(Key::I) => {
                 self.player2.movement[3] = true;
             }
-            Button::Keyboard(Key::Space) => {
+            Button::Keyboard(Key::Q) => {
                 let health = 100.0 - (10.0 * self.player1.attack(self.player2.position[0]));
                 let damage = 100.0 - (10.0 * self.player2.attacked(self.player1.stance[1], self.player1.stats[0]));
                 self.hud.update(health, damage);
@@ -132,7 +139,13 @@ impl App {
 
     fn release(&mut self, args: &ButtonArgs) {
         match args.button {
-            Button::Keyboard(Key::Return) => {
+            Button::Keyboard(Key::O) => {
+                self.player2.stance[4] = false;
+            }
+            Button::Keyboard(Key::E) =>{
+                self.player1.stance[4] = false;
+            }
+            Button::Keyboard(Key::U) => {
                 self.player2.stance[1] = false;
             }
             Button::Keyboard(Key::L) => {
@@ -147,7 +160,7 @@ impl App {
             Button::Keyboard(Key::I) => {
                 self.player2.movement[3] = false;
             }
-            Button::Keyboard(Key::Space) => {
+            Button::Keyboard(Key::Q) => {
                 self.player1.stance[1] = false;
             }
             Button::Keyboard(Key::D) => {
