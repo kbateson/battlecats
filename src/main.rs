@@ -19,6 +19,8 @@ use cat::Cat;
 use hud::HUD;
 use std::path::Path;
 use graphics::rectangle::square;
+use std::fs;
+use std::path::PathBuf;
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
@@ -46,10 +48,18 @@ impl App {
             let outer_health_right = self.hud.health_bar_right.outer;
             let inner_health_right = self.hud.health_bar_right.inner;
             let damage_health_right = self.hud.health_bar_right.damage;
-            let chester: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/chester.gif"), &TextureSettings::new()).unwrap();
-            let chester_paw: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/chesterpaw.gif"), &TextureSettings::new()).unwrap();
-            let gigabyte: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/gigabyte.gif"), &TextureSettings::new()).unwrap();
-            let gigabyte_paw: Texture = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/gigabytepaw.gif"), &TextureSettings::new()).unwrap();
+            let chester_relative = PathBuf::from("./src/imgs/chester.gif");
+            let chester_absolute = fs::canonicalize(&chester_relative);
+            let chester_paw_relative = PathBuf::from("./src/imgs/chesterpaw.gif");
+            let chester_paw_absolute = fs::canonicalize(&chester_paw_relative);
+            let gigabyte_relative = PathBuf::from("./src/imgs/gigabyte.gif");
+            let gigabyte_absolute = fs::canonicalize(&gigabyte_relative);
+            let gigabyte_paw_relative = PathBuf::from("./src/imgs/gigabytepaw.gif");
+            let gigabyte_paw_absolute = fs::canonicalize(&gigabyte_paw_relative);
+            let chester: Texture = Texture::from_path(Path::new(&chester_absolute.unwrap()), &TextureSettings::new()).unwrap();
+            let chester_paw: Texture = Texture::from_path(Path::new(&chester_paw_absolute.unwrap()), &TextureSettings::new()).unwrap();
+            let gigabyte: Texture = Texture::from_path(Path::new(&gigabyte_absolute.unwrap()), &TextureSettings::new()).unwrap();
+            let gigabyte_paw: Texture = Texture::from_path(Path::new(&gigabyte_paw_absolute.unwrap()), &TextureSettings::new()).unwrap();
 
             self.gl.draw(args.viewport(), |c, gl| {
                 // Clear the screen.
@@ -74,11 +84,15 @@ impl App {
         } else {
             const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
             let winner: Texture;
+            let lwin_relative = PathBuf::from("./src/imgs/lwin.gif");
+            let lwin_absolute = fs::canonicalize(&lwin_relative);
+            let rwin_relative = PathBuf::from("./src/imgs/rwin.gif");
+            let rwin_absolute = fs::canonicalize(&rwin_relative);
 
             if left_alive {
-                winner = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/lwin.png"), &TextureSettings::new()).unwrap();
+                winner = Texture::from_path(Path::new(&lwin_absolute.unwrap()), &TextureSettings::new()).unwrap();
             } else {
-                winner = Texture::from_path(Path::new("/Users/Kristen/Desktop/CS Stuff/Rust/Battlecats/battlecats/src/imgs/rwin.png"), &TextureSettings::new()).unwrap();
+                winner = Texture::from_path(Path::new(&rwin_absolute.unwrap()), &TextureSettings::new()).unwrap();
             }
 
             let winner_box = Image::new().rect([150.0, 125.0, 500.0, 150.0]);
