@@ -4,6 +4,7 @@ pub struct LeftCat {
     pub stats: [f64; 5], // attack, spd, def, current health, total health
     pub movement: [bool; 4], // left, right, crouch, jump
     pub stance: [bool; 5], // stand, attack, defend, injured
+    pub hissCount: f64
 }
 
 pub struct RightCat {
@@ -12,31 +13,33 @@ pub struct RightCat {
     pub stats: [f64; 5], // attack, spd, def, current health, total health
     pub movement: [bool; 4], // left, right, crouch, jump
     pub stance: [bool; 5], // stand, attack, defend, injured
+    pub hissCount: f64
 }
 
 pub trait Cat {
-    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5]) -> Self;
+    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5], stance: [bool; 5]) -> Self;
     fn clone(&mut self) -> Self;
     fn move_cat(&mut self, position: f64);
     fn attacked(&mut self, other_cat_attacking: bool, other_cat_attack: f64) -> f64;
     fn attack(&mut self, other_cat: f64) -> f64;
     fn check_alive(&mut self) -> bool;
-    fn hiss(&mut self, other_cat: f64);
-    fn hissed(&mut self, other_cat_hissing: bool);
+    fn hiss(&mut self);
+    fn hissed(&mut self, other_cat: f64, other_cat_hissing: bool);
 }
 
 impl Cat for LeftCat {
-    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5]) -> Self {
+    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5], stance: [bool; 5]) -> Self {
         LeftCat {
             color: color,
             position: position,
             stats: stats,
             movement: [false, false, false, false],
-            stance: [true, false, false, false, false]
+            stance: stance,
+            hissCount: 0.0
         }
     }
     fn clone(&mut self) -> LeftCat {
-        return LeftCat::new(self.color, self.position, self.stats);
+        return LeftCat::new(self.color, self.position, self.stats, self.stance);
     }
     fn attacked(&mut self, other_cat_attacking: bool, other_cat_attack: f64) -> f64 {
         if other_cat_attacking == true {
@@ -51,18 +54,13 @@ impl Cat for LeftCat {
         }
         return self.stats[3];
     }
-    fn hiss(&mut self, other_cat: f64) {
-        if self.position[0] + self.position[2] >= (other_cat - 60.0) {
-            self.stance[4] = true;
-        }
-        else {
-            self.stance[4] = false;
-        }
+    fn hiss(&mut self) {
+        self.stance[2] = true;
     }
-    fn hissed(&mut self, other_cat_hissing: bool) {
-        if other_cat_hissing == true {
+    fn hissed(&mut self, other_cat: f64, other_cat_hissing: bool) {
+        if other_cat_hissing && self.position[0] <= (other_cat + 60.0) {
             self.stance[0] = false;
-            self.position[0] -= 30.0;
+            self.position[0] -= 60.0;
         }
     }
     fn move_cat(&mut self, other_cat: f64) {
@@ -111,17 +109,18 @@ impl Cat for LeftCat {
 }
 
 impl Cat for RightCat {
-    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5]) -> Self {
+    fn new(color: [f32; 4], position: [f64; 4], stats: [f64; 5], stance: [bool; 5]) -> Self {
         RightCat {
             color: color,
             position: position,
             stats: stats,
             movement: [false, false, false, false],
-            stance: [true, false, false, false, false]
+            stance: stance,
+            hissCount: 0.0
         }
     }
     fn clone(&mut self) -> RightCat {
-        return RightCat::new(self.color, self.position, self.stats);
+        return RightCat::new(self.color, self.position, self.stats, self.stance);
     }
     fn attacked(&mut self, other_cat_attacking: bool, other_cat_attack: f64) -> f64 {
         if other_cat_attacking == true {
@@ -137,18 +136,13 @@ impl Cat for RightCat {
         }
         return self.stats[3];
     }
-    fn hiss(&mut self, other_cat: f64) {
-        if self.position[0] <= (other_cat + 60.0) {
-            self.stance[4] = true;
-        }
-        else {
-            self.stance[4] = false;
-        }
+    fn hiss(&mut self) {
+        self.stance[2] = true;
     }
-    fn hissed(&mut self, other_cat_hissing: bool) {
-        if other_cat_hissing == true {
+    fn hissed(&mut self, other_cat: f64, other_cat_hissing: bool) {
+        if other_cat_hissing && self.position[0] <= (other_cat - 60.0) {
             self.stance[0] = false;
-            self.position[0] += 30.0;
+            self.position[0] += 60.0;
         }
     }
     fn move_cat(&mut self, other_cat: f64) {

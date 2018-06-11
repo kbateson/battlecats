@@ -26,10 +26,17 @@ pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
     player1: LeftCat,
     player2: RightCat,
-    hud: HUD
+    hud: HUD,
+    reset: bool
 }
 
 impl App {
+    fn reset(&mut self) {
+        self.player1 = LeftCat::new([1.0, 0.0, 0.0, 1.0], [105.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        self.player2 = RightCat::new([0.0, 0.0, 1.0, 1.0], [595.0, 200.0, 50.0, 50.0], [1.0, 2.0, 0.75, 10.0, 10.0], [true, false, false, false, false]);
+        self.hud = HUD::new();
+    }
+
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
         let left_alive: bool = self.player1.check_alive();
@@ -60,7 +67,7 @@ impl App {
             let chester_paw: Texture = Texture::from_path(Path::new(&chester_paw_absolute.unwrap()), &TextureSettings::new()).unwrap();
             let gigabyte: Texture = Texture::from_path(Path::new(&gigabyte_absolute.unwrap()), &TextureSettings::new()).unwrap();
             let gigabyte_paw: Texture = Texture::from_path(Path::new(&gigabyte_paw_absolute.unwrap()), &TextureSettings::new()).unwrap();
-
+            
             self.gl.draw(args.viewport(), |c, gl| {
                 // Clear the screen.
                 clear(GREEN, gl);
@@ -68,12 +75,41 @@ impl App {
                 let chester_box_paw = Image::new().rect([square1.position[0]+45.0, square1.position[1]+72.0, 70.0, 20.0]);
                 let gigs_box = Image::new().rect(square(square2.position[0], square2.position[1], 100.0));
                 let gigs_box_paw = Image::new().rect([square2.position[0]-15.0, square2.position[1]+72.0, 70.0, 20.0]);
-                
-                // bg_box.draw(&bg, &DrawState::default(), c.transform, gl);
+                let lhiss_relative = PathBuf::from("./src/imgs/lhiss.png");
+                let lhiss_absolute = fs::canonicalize(&lhiss_relative);
+                let lhiss_box = Image::new().rect(square(square1.position[0]+100.0, square1.position[1], 100.0));
+                let lhiss: Texture = Texture::from_path(Path::new(&lhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
+                let rhiss_relative = PathBuf::from("./src/imgs/rhiss.png");
+                let rhiss_absolute = fs::canonicalize(&rhiss_relative);
+                let rhiss: Texture = Texture::from_path(Path::new(&rhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                 gigs_box_paw.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
-                gigs_box.draw(&gigabyte, &DrawState::default(), c.transform, gl);
                 chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
-                chester_box.draw(&chester, &DrawState::default(), c.transform, gl);
+                 
+                // bg_box.draw(&bg, &DrawState::default(), c.transform, gl);
+                if square1.stance[2] {
+                    let chester_hiss_relative = PathBuf::from("./src/imgs/chesterhiss.png");
+                    let chester_hiss_absolute = fs::canonicalize(&chester_hiss_relative);
+                    let chester_hiss: Texture = Texture::from_path(Path::new(&chester_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
+                    println!("chester hiss!");
+                    chester_box.draw(&chester_hiss, &DrawState::default(), c.transform, gl);
+                    lhiss_box.draw(&lhiss, &DrawState::default(), c.transform, gl);
+                } else {
+                    chester_box.draw(&chester, &DrawState::default(), c.transform, gl);
+                }
+
+                if square2.stance[2] {
+                    println!("gigs hiss!");
+                    let gigabyte_hiss_relative = PathBuf::from("./src/imgs/gigabytehiss.png");
+                    let gigabyte_hiss_absolute = fs::canonicalize(&gigabyte_hiss_relative);
+                    let gigabyte_hiss: Texture = Texture::from_path(Path::new(&gigabyte_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
+                    let rhiss_box = Image::new().rect(square(square2.position[0]-100.0, square2.position[1], 100.0));  
+                
+                    gigs_box.draw(&gigabyte_hiss, &DrawState::default(), c.transform, gl);
+                    rhiss_box.draw(&rhiss, &DrawState::default(), c.transform, gl);
+                } else {
+                    gigs_box.draw(&gigabyte, &DrawState::default(), c.transform, gl);
+                }
+
                 rectangle(WHITE, outer_health_left, c.transform, gl);
                 rectangle(LIME, inner_health_left, c.transform, gl);
                 rectangle(RED, damage_health_left, c.transform, gl);
@@ -82,11 +118,14 @@ impl App {
                 rectangle(RED, damage_health_right, c.transform, gl);
             });
         } else {
+            if self.reset {
+                self.reset();
+            }
             const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
             let winner: Texture;
-            let lwin_relative = PathBuf::from("./src/imgs/lwin.gif");
+            let lwin_relative = PathBuf::from("./src/imgs/lwin.png");
             let lwin_absolute = fs::canonicalize(&lwin_relative);
-            let rwin_relative = PathBuf::from("./src/imgs/rwin.gif");
+            let rwin_relative = PathBuf::from("./src/imgs/rwin.png");
             let rwin_absolute = fs::canonicalize(&rwin_relative);
 
             if left_alive {
@@ -107,12 +146,14 @@ impl App {
     fn input(&mut self, args: &ButtonArgs) {
         match args.button {
             Button::Keyboard(Key::O) => {
-                self.player2.hiss(self.player1.position[0] + self.player1.position[2]);
-                self.player1.hissed(self.player2.stance[4]);
+                println!("press o");
+                self.player2.hiss();
+                self.player1.hissed(self.player2.position[0] + self.player2.position[2], self.player2.stance[2]);
             }
-            Button::Keyboard(Key::E) =>{
-                self.player1.hiss(self.player2.position[0]);
-                self.player2.hissed(self.player1.stance[4]);
+            Button::Keyboard(Key::E) => {
+                println!("press e");
+                self.player1.hiss();
+                self.player2.hissed(self.player1.position[0] + self.player1.position[2], self.player1.stance[2]);
             }
             Button::Keyboard(Key::U) => {
                 let damage = 100.0 - (10.0 * self.player2.attack(self.player1.position[0] + self.player1.position[2]));
@@ -148,6 +189,9 @@ impl App {
             Button::Keyboard(Key::W) => {
                 self.player1.movement[3] = true;
             }
+            Button::Keyboard(Key::Return) => {
+                self.reset = true;
+            }
             _ => {}
         }
     }
@@ -155,10 +199,10 @@ impl App {
     fn release(&mut self, args: &ButtonArgs) {
         match args.button {
             Button::Keyboard(Key::O) => {
-                self.player2.stance[4] = false;
+                self.player2.stance[2] = false;
             }
             Button::Keyboard(Key::E) =>{
-                self.player1.stance[4] = false;
+                self.player1.stance[2] = false;
             }
             Button::Keyboard(Key::U) => {
                 self.player2.stance[1] = false;
@@ -190,6 +234,9 @@ impl App {
             Button::Keyboard(Key::W) => {
                 self.player1.movement[3] = false;
             }
+            Button::Keyboard(Key::Return) => {
+                self.reset = false;
+            }
             _ => {}
         }
     }
@@ -217,9 +264,10 @@ fn main() {
     // Create a new game and run it.
     let mut app = App {
         gl: GlGraphics::new(opengl),
-        player1: LeftCat::new([1.0, 0.0, 0.0, 1.0], [105.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0]),
-        player2: RightCat::new([0.0, 0.0, 1.0, 1.0], [595.0, 200.0, 50.0, 50.0], [1.0, 2.0, 0.75, 10.0, 10.0]),
-        hud: HUD::new()
+        player1: LeftCat::new([1.0, 0.0, 0.0, 1.0], [105.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]),
+        player2: RightCat::new([0.0, 0.0, 1.0, 1.0], [595.0, 200.0, 50.0, 50.0], [1.0, 2.0, 0.75, 10.0, 10.0], [true, false, false, false, false]),
+        hud: HUD::new(),
+        reset: false
     };
 
     let mut events = Events::new(EventSettings::new());
