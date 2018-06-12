@@ -75,12 +75,11 @@ impl App {
                 let chester_box_paw = Image::new().rect([square1.position[0]+45.0, square1.position[1]+72.0, 70.0, 20.0]);
                 let gigs_box = Image::new().rect(square(square2.position[0], square2.position[1], 100.0));
                 let gigs_box_paw = Image::new().rect([square2.position[0]-15.0, square2.position[1]+72.0, 70.0, 20.0]);
-                let lhiss_relative = PathBuf::from("./src/imgs/lhiss.png");
-                let lhiss_absolute = fs::canonicalize(&lhiss_relative);
-                let lhiss_box = Image::new().rect(square(square1.position[0]+100.0, square1.position[1], 100.0));
-                let lhiss: Texture = Texture::from_path(Path::new(&lhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                 let rhiss_relative = PathBuf::from("./src/imgs/rhiss.png");
                 let rhiss_absolute = fs::canonicalize(&rhiss_relative);
+                let lhiss_relative = PathBuf::from("./src/imgs/lhiss.png");
+                let lhiss_absolute = fs::canonicalize(&lhiss_relative);
+                let lhiss: Texture = Texture::from_path(Path::new(&lhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                 let rhiss: Texture = Texture::from_path(Path::new(&rhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                 gigs_box_paw.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
                 chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
@@ -90,7 +89,7 @@ impl App {
                     let chester_hiss_relative = PathBuf::from("./src/imgs/chesterhiss.png");
                     let chester_hiss_absolute = fs::canonicalize(&chester_hiss_relative);
                     let chester_hiss: Texture = Texture::from_path(Path::new(&chester_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
-                    println!("chester hiss!");
+                    let lhiss_box = Image::new().rect(square(square1.position[0]+100.0, square1.position[1], 100.0));
                     chester_box.draw(&chester_hiss, &DrawState::default(), c.transform, gl);
                     lhiss_box.draw(&lhiss, &DrawState::default(), c.transform, gl);
                 } else {
@@ -147,13 +146,11 @@ impl App {
         match args.button {
             Button::Keyboard(Key::O) => {
                 self.player2.hiss();
-                self.player1.hissed(self.player2.stats[0], self.player2.stance[4]);
-                self.player2.stance[2] = true;
+                self.player1.hissed(self.player2.position[0] + self.player2.position[2], self.player2.position[1], self.player2.stance[2]);
             }
             Button::Keyboard(Key::E) =>{
                 self.player1.hiss();
-                self.player2.hissed(self.player1.stats[0], self.player1.stance[4]);
-                self.player1.stance[2] = true;
+                self.player2.hissed(self.player1.position[0] + self.player1.position[2], self.player1.position[1], self.player1.stance[2]);
             }
             Button::Keyboard(Key::U) => {
                 let damage = 100.0 - (10.0 * self.player2.attack(self.player1.position[0] + self.player1.position[2], self.player1.position[1]));
