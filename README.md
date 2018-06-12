@@ -1,5 +1,7 @@
 # battlecats
 
+CS 410 Rust Project by Hayley Howard and Kristen Bateson<br/>
+
 ## To run this code
 Type "cargo build" to build the project, and then "cargo run" to start the game.
 
