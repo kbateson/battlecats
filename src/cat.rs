@@ -45,7 +45,7 @@ impl Cat for LeftCat {
         return self.stats[3];
     }
     fn attack(&mut self) -> f64 {
-            self.stance[1] = true;
+        self.stance[1] = true;
         return self.stats[3];
     }
     fn hiss(&mut self) {

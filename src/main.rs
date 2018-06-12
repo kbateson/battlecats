@@ -93,7 +93,6 @@ impl App {
                 }
 
                 if square2.stance[2] {
-                    println!("gigs hiss!");
                     let gigabyte_hiss_relative = PathBuf::from("./src/imgs/gigabytehiss.png");
                     let gigabyte_hiss_absolute = fs::canonicalize(&gigabyte_hiss_relative);
                     let gigabyte_hiss: Texture = Texture::from_path(Path::new(&gigabyte_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
