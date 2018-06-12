@@ -132,7 +132,7 @@ impl App {
                 self.player2.movement[3] = true;
             }
             Button::Keyboard(Key::Q) => {
-                let damage = 100.0 - (10.0 * self.player1.attack(self.player2.position[0] + self.player2.position[2], self.player2.position[1]));
+                let damage = 100.0 - (10.0 * self.player1.attack(self.player2.position[0], self.player2.position[1]));
                 let health = 100.0 - (10.0 * self.player2.attacked(self.player1.stance[1], self.player1.stats[0]));
                 self.hud.update(health, damage);
             }
