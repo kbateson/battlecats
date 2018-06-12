@@ -146,12 +146,14 @@ impl App {
     fn input(&mut self, args: &ButtonArgs) {
         match args.button {
             Button::Keyboard(Key::O) => {
-                self.player2.hiss(self.player1.position[0] + self.player1.position[2], self.player1.position[1]);
+                self.player2.hiss();
                 self.player1.hissed(self.player2.stats[0], self.player2.stance[4]);
+                self.player2.stance[2] = true;
             }
             Button::Keyboard(Key::E) =>{
-                self.player1.hiss(self.player2.position[0], self.player2.position[1]);
+                self.player1.hiss();
                 self.player2.hissed(self.player1.stats[0], self.player1.stance[4]);
+                self.player1.stance[2] = true;
             }
             Button::Keyboard(Key::U) => {
                 let damage = 100.0 - (10.0 * self.player2.attack(self.player1.position[0] + self.player1.position[2], self.player1.position[1]));
