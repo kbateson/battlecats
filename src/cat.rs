@@ -45,8 +45,16 @@ impl Cat for LeftCat {
         return self.stats[3];
     }
     fn attack(&mut self, other_cat_x: f64, other_cat_y: f64) -> f64 {
-        if self.position[0] + self.position[2] <= (other_cat_x - 45.0) && self.position[1] <= (other_cat_y + 25.0) {
+        if self.position[0] + self.position[2] >= (other_cat_x - 45.0) && self.position[1] <= (other_cat_y + 25.0) {
+            println!("attack!");
+            println!("{}", self.position[0] + self.position[2]);
+            println!("{}", other_cat_x - 45.0);
             self.stance[1] = true;
+        }
+        else {
+            println!("did not attack!");
+            println!("{}", self.position[0] + self.position[2]);
+            println!("{}", other_cat_x - 45.0);
         }
         return self.stats[3];
     }
@@ -126,6 +134,14 @@ impl Cat for RightCat {
     fn attack(&mut self, other_cat_x: f64, other_cat_y: f64) -> f64 {
         if self.position[0] <= (other_cat_x + 45.0) && self.position[1] <= (other_cat_y + 25.0) {
             self.stance[1] = true;
+            println!("attack!");
+            println!("{}", self.position[0]);
+            println!("{}", other_cat_x + 45.0);
+        }
+        else {
+            println!("not attack!");
+            println!("{}", self.position[0]);
+            println!("{}", other_cat_x + 45.0);
         }
         return self.stats[3];
     }
