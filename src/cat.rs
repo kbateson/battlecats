@@ -179,3 +179,132 @@ impl Cat for RightCat {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn check_live_left_cat_alive() {
+        use cat::Cat;
+        use cat::LeftCat;
+        let mut cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [105.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = cat.check_alive();
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn check_dead_left_cat_alive() {
+        use cat::Cat;
+        use cat::LeftCat;
+        let mut cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [105.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        cat.stats[3] = 0.0;
+        let result = cat.check_alive();
+        assert_eq!(result, false);
+    }
+
+    #[test]
+    fn left_cat_attacked_right_cat_in_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = catR.attacked(true, 1.0, catL.position[0], catL.position[1]);
+        assert_eq!(result, 9.0);
+    }
+
+    #[test]
+    fn left_cat_attacked_right_cat_out_of_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = catR.attacked(true, 1.0, catL.position[0], catL.position[1]);
+        assert_eq!(result, 10.0);
+    }
+
+    #[test]
+    fn left_cat_hissed_at_right_cat_in_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = catR.hissed(catL.position[0], catL.position[1]);
+        assert_eq!(catR.position[0], 130.0);
+    }
+
+    #[test]
+    fn left_cat_hissed_at_right_cat_out_of_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = catR.hissed(catL.position[0], catL.position[1]);
+        assert_eq!(catR.position[0], 200.0);
+    }
+
+    #[test]
+    fn check_live_right_cat_alive() {
+        use cat::Cat;
+        use cat::RightCat;
+        let mut cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [105.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = cat.check_alive();
+        assert_eq!(result, true);
+    }
+
+    #[test]
+    fn check_dead_right_cat_alive() {
+        use cat::Cat;
+        use cat::RightCat;
+        let mut cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [105.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        cat.stats[3] = 0.0;
+        let result = cat.check_alive();
+        assert_eq!(result, false);
+    }
+
+    #[test]
+    fn right_cat_attacked_left_cat_in_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = catL.attacked(true, 1.0, catR.position[0], catR.position[1]);
+        assert_eq!(result, 9.0);
+    }
+
+    #[test]
+    fn right_cat_attacked_left_cat_out_of_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = catL.attacked(true, 1.0, catR.position[0], catR.position[1]);
+        assert_eq!(result, 10.0);
+    }
+
+    #[test]
+    fn right_cat_hissed_at_left_cat_in_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = catL.hissed(catR.position[0], catR.position[1]);
+        assert_eq!(catL.position[0], 20.0);
+    }
+
+    #[test]
+    fn right_cat_hissed_at_left_cat_out_of_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = catL.hissed(catR.position[0], catR.position[1]);
+        assert_eq!(catL.position[0], 0.0);
+    }
+}
