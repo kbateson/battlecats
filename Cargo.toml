@@ -1,7 +1,7 @@
 [package]
 name = "battlecats"
 version = "0.1.0"
-authors = ["Kristen Bateson <kbateson@pdx.edu>, Hayley Howard <hahoward@pdx.edu>"]
+authors = ["Kristen Bateson <kbateson@pdx.edu>", "Hayley Howard <hahoward@pdx.edu>"]
 
 [[bin]]
 name = "battlecats"
