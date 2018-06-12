@@ -67,13 +67,7 @@ impl App {
             let chester_paw: Texture = Texture::from_path(Path::new(&chester_paw_absolute.unwrap()), &TextureSettings::new()).unwrap();
             let gigabyte: Texture = Texture::from_path(Path::new(&gigabyte_absolute.unwrap()), &TextureSettings::new()).unwrap();
             let gigabyte_paw: Texture = Texture::from_path(Path::new(&gigabyte_paw_absolute.unwrap()), &TextureSettings::new()).unwrap();
-            let lhiss_relative = PathBuf::from("./src/imgs/lhiss.png");
-            let lhiss_absolute = fs::canonicalize(&lhiss_relative);
-            let lhiss: Texture = Texture::from_path(Path::new(&lhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
-            let rhiss_relative = PathBuf::from("./src/imgs/rhiss.png");
-            let rhiss_absolute = fs::canonicalize(&rhiss_relative);
-            let rhiss: Texture = Texture::from_path(Path::new(&rhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
-                  
+            
             self.gl.draw(args.viewport(), |c, gl| {
                 // Clear the screen.
                 clear(GREEN, gl);
@@ -81,20 +75,28 @@ impl App {
                 let chester_box_paw = Image::new().rect([square1.position[0]+45.0, square1.position[1]+72.0, 70.0, 20.0]);
                 let gigs_box = Image::new().rect(square(square2.position[0], square2.position[1], 100.0));
                 let gigs_box_paw = Image::new().rect([square2.position[0]-15.0, square2.position[1]+72.0, 70.0, 20.0]);
-                   
-                gigs_box_paw.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
+                let rhiss_relative = PathBuf::from("./src/imgs/rhiss.png");
+                     
                 chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
                  
                 // bg_box.draw(&bg, &DrawState::default(), c.transform, gl);
                 if square1.stance[2] {
                     let chester_hiss_relative = PathBuf::from("./src/imgs/chesterhiss.png");
                     let chester_hiss_absolute = fs::canonicalize(&chester_hiss_relative);
+                    let lhiss_relative = PathBuf::from("./src/imgs/lhiss.png");
+                    let lhiss_absolute = fs::canonicalize(&lhiss_relative);
+                    let lhiss: Texture = Texture::from_path(Path::new(&lhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
+                    
                     let lhiss_box = Image::new().rect(square(square1.position[0]+100.0, square1.position[1], 100.0));
                     let chester_hiss: Texture = Texture::from_path(Path::new(&chester_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                     chester_box.draw(&chester_hiss, &DrawState::default(), c.transform, gl);
                     lhiss_box.draw(&lhiss, &DrawState::default(), c.transform, gl);
+                    chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
+                
                 } else {
                     chester_box.draw(&chester, &DrawState::default(), c.transform, gl);
+                    chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
+                
                 }
 
                 if square2.stance[2] {
@@ -102,12 +104,18 @@ impl App {
                     let gigabyte_hiss_relative = PathBuf::from("./src/imgs/gigabytehiss.png");
                     let gigabyte_hiss_absolute = fs::canonicalize(&gigabyte_hiss_relative);
                     let gigabyte_hiss: Texture = Texture::from_path(Path::new(&gigabyte_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
+                    let rhiss_absolute = fs::canonicalize(&rhiss_relative);
+                    let rhiss: Texture = Texture::from_path(Path::new(&rhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                     let rhiss_box = Image::new().rect(square(square2.position[0]-100.0, square2.position[1], 100.0));  
                 
                     gigs_box.draw(&gigabyte_hiss, &DrawState::default(), c.transform, gl);
                     rhiss_box.draw(&rhiss, &DrawState::default(), c.transform, gl);
+                    gigs_box_paw.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
+                
                 } else {
                     gigs_box.draw(&gigabyte, &DrawState::default(), c.transform, gl);
+                    gigs_box_paw.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
+                
                 }
 
                 rectangle(WHITE, outer_health_left, c.transform, gl);
