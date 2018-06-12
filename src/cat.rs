@@ -19,9 +19,9 @@ pub trait Cat {
     fn clone(&mut self) -> Self;
     fn move_cat(&mut self, position: f64);
     fn attacked(&mut self, other_cat_attacking: bool, other_cat_attack: f64) -> f64;
-    fn attack(&mut self, other_cat: f64) -> f64;
+    fn attack(&mut self, other_cat_x: f64, other_cat_y: f64) -> f64;
     fn check_alive(&mut self) -> bool;
-    fn hiss(&mut self, other_cat: f64);
+    fn hiss(&mut self, other_cat_x: f64, other_cat_y: f64);
     fn hissed(&mut self, other_cat_hissing: bool);
 }
 
@@ -41,18 +41,17 @@ impl Cat for LeftCat {
     fn attacked(&mut self, other_cat_attacking: bool, other_cat_attack: f64) -> f64 {
         if other_cat_attacking == true {
             self.stats[3] = self.stats[3] - other_cat_attack;
-            println!("{}", self.stats[3]);
         }
         return self.stats[3];
     }
-    fn attack(&mut self, other_cat: f64) -> f64 {
-        if self.position[0] + self.position[2] >= (other_cat - 35.0) {
+    fn attack(&mut self, other_cat_x: f64, other_cat_y: f64) -> f64 {
+        if self.position[0] + self.position[2] <= (other_cat_x - 45.0) && self.position[1] <= (other_cat_y + 25.0) {
             self.stance[1] = true;
         }
         return self.stats[3];
     }
-    fn hiss(&mut self, other_cat: f64) {
-        if self.position[0] + self.position[2] >= (other_cat - 60.0) {
+    fn hiss(&mut self, other_cat_x: f64, other_cat_y: f64) {
+        if self.position[0] + self.position[2] >= (other_cat_x - 60.0) && self.position[1] <= (other_cat_y + 25.0) {
             self.stance[4] = true;
         }
         else {
@@ -126,19 +125,17 @@ impl Cat for RightCat {
     fn attacked(&mut self, other_cat_attacking: bool, other_cat_attack: f64) -> f64 {
         if other_cat_attacking == true {
             self.stats[3] = self.stats[3] - other_cat_attack;
-            println!("Attacked!");
-            println!("{}", self.stats[3]);
         }
         return self.stats[3];
     }
-    fn attack(&mut self, other_cat: f64) -> f64 {
-        if self.position[0] <= (other_cat + 35.0)  {
+    fn attack(&mut self, other_cat_x: f64, other_cat_y: f64) -> f64 {
+        if self.position[0] <= (other_cat_x + 45.0) && self.position[1] <= (other_cat_y + 25.0) {
             self.stance[1] = true;
         }
         return self.stats[3];
     }
-    fn hiss(&mut self, other_cat: f64) {
-        if self.position[0] <= (other_cat + 60.0) {
+    fn hiss(&mut self, other_cat_x: f64, other_cat_y: f64) {
+        if self.position[0] <= (other_cat_x + 60.0) && self.position[1] <= (other_cat_y + 25.0) {
             self.stance[4] = true;
         }
         else {
