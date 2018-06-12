@@ -146,7 +146,7 @@ impl App {
         match args.button {
             Button::Keyboard(Key::O) => {
                 self.player2.hiss();
-                self.player1.hissed(self.player2.position[0] + self.player2.position[2], self.player2.position[1], self.player2.stance[2]);
+                self.player1.hissed(self.player2.position[2], self.player2.position[1], self.player2.stance[2]);
             }
             Button::Keyboard(Key::E) =>{
                 self.player1.hiss();
