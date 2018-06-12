@@ -14,6 +14,7 @@ impl HUD {
     }
 
     pub fn update(&mut self, left_damage: f64, right_damage: f64) {
+        println!("left cat: {}, right cat: {}", left_damage, right_damage);
         if left_damage != 0.0 {
             self.health_bar_left.update(left_damage);
         }

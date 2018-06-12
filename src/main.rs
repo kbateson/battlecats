@@ -67,7 +67,13 @@ impl App {
             let chester_paw: Texture = Texture::from_path(Path::new(&chester_paw_absolute.unwrap()), &TextureSettings::new()).unwrap();
             let gigabyte: Texture = Texture::from_path(Path::new(&gigabyte_absolute.unwrap()), &TextureSettings::new()).unwrap();
             let gigabyte_paw: Texture = Texture::from_path(Path::new(&gigabyte_paw_absolute.unwrap()), &TextureSettings::new()).unwrap();
-            
+            let lhiss_relative = PathBuf::from("./src/imgs/lhiss.png");
+            let lhiss_absolute = fs::canonicalize(&lhiss_relative);
+            let lhiss: Texture = Texture::from_path(Path::new(&lhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
+            let rhiss_relative = PathBuf::from("./src/imgs/rhiss.png");
+            let rhiss_absolute = fs::canonicalize(&rhiss_relative);
+            let rhiss: Texture = Texture::from_path(Path::new(&rhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
+                  
             self.gl.draw(args.viewport(), |c, gl| {
                 // Clear the screen.
                 clear(GREEN, gl);
@@ -75,12 +81,7 @@ impl App {
                 let chester_box_paw = Image::new().rect([square1.position[0]+45.0, square1.position[1]+72.0, 70.0, 20.0]);
                 let gigs_box = Image::new().rect(square(square2.position[0], square2.position[1], 100.0));
                 let gigs_box_paw = Image::new().rect([square2.position[0]-15.0, square2.position[1]+72.0, 70.0, 20.0]);
-                let rhiss_relative = PathBuf::from("./src/imgs/rhiss.png");
-                let rhiss_absolute = fs::canonicalize(&rhiss_relative);
-                let lhiss_relative = PathBuf::from("./src/imgs/lhiss.png");
-                let lhiss_absolute = fs::canonicalize(&lhiss_relative);
-                let lhiss: Texture = Texture::from_path(Path::new(&lhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
-                let rhiss: Texture = Texture::from_path(Path::new(&rhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
+                   
                 gigs_box_paw.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
                 chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
                  
@@ -88,8 +89,8 @@ impl App {
                 if square1.stance[2] {
                     let chester_hiss_relative = PathBuf::from("./src/imgs/chesterhiss.png");
                     let chester_hiss_absolute = fs::canonicalize(&chester_hiss_relative);
-                    let chester_hiss: Texture = Texture::from_path(Path::new(&chester_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                     let lhiss_box = Image::new().rect(square(square1.position[0]+100.0, square1.position[1], 100.0));
+                    let chester_hiss: Texture = Texture::from_path(Path::new(&chester_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                     chester_box.draw(&chester_hiss, &DrawState::default(), c.transform, gl);
                     lhiss_box.draw(&lhiss, &DrawState::default(), c.transform, gl);
                 } else {
@@ -153,9 +154,9 @@ impl App {
                 self.player2.hissed(self.player1.position[0] + self.player1.position[2], self.player1.position[1], self.player1.stance[2]);
             }
             Button::Keyboard(Key::U) => {
-                let damage = 100.0 - (10.0 * self.player2.attack(self.player1.position[0] + self.player1.position[2], self.player1.position[1]));
-                let health = 100.0 - (10.0 * self.player1.attacked(self.player2.stance[1], self.player2.stats[0]));
-                self.hud.update(health, damage);
+                let right_cat = 100.0 - (10.0 * self.player2.attack(self.player1.position[0] + self.player1.position[2], self.player1.position[1]));
+                let left_cat = 100.0 - (10.0 * self.player1.attacked(self.player2.stance[1], self.player2.stats[0]));
+                self.hud.update(left_cat, right_cat);
             }
             Button::Keyboard(Key::L) => {
                 self.player2.movement[1] = true;
@@ -170,9 +171,9 @@ impl App {
                 self.player2.movement[3] = true;
             }
             Button::Keyboard(Key::Q) => {
-                let damage = 100.0 - (10.0 * self.player1.attack(self.player2.position[0] + self.player2.position[2], self.player2.position[1]));
-                let health = 100.0 - (10.0 * self.player2.attacked(self.player1.stance[1], self.player1.stats[0]));
-                self.hud.update(health, damage);
+                let left_cat = 100.0 - (10.0 * self.player1.attack(self.player2.position[0] + self.player2.position[2], self.player2.position[1]));
+                let right_cat = 100.0 - (10.0 * self.player2.attacked(self.player1.stance[1], self.player1.stats[0]));
+                self.hud.update(left_cat, right_cat);
             }
             Button::Keyboard(Key::D) => {
                 self.player1.movement[1] = true;
