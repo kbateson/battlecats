@@ -59,7 +59,7 @@ impl Cat for LeftCat {
     }
     fn move_cat(&mut self, other_cat: f64) {
         // left
-        if self.movement[0] && self.position[0] >= 0.0 {
+        if self.movement[0] && self.position[0] > 0.0 {
             self.stance[0] = false;
             self.position[0] -= self.stats[1];
         }
@@ -136,7 +136,7 @@ impl Cat for RightCat {
     }
     fn move_cat(&mut self, other_cat: f64) {
         // left
-        if self.movement[0] && self.position[0] >= 0.0 && (self.position[0] - 30.0) >= other_cat {
+        if self.movement[0] && self.position[0] > 0.0 && (self.position[0] - 30.0) >= other_cat {
             self.stance[0] = false;
             self.position[0] -= self.stats[1];
         }
@@ -182,6 +182,58 @@ impl Cat for RightCat {
 
 #[cfg(test)]
 mod tests {
+    /**************************/
+    /***** Left Cat Tests *****/
+    /**************************/
+
+    #[test]
+    fn left_cat_move_left_in_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.movement[0] = true;
+        left_cat.move_cat(right_cat.position[0]);
+        assert_eq!(left_cat.position[0], 49.0);
+    }
+
+    #[test]
+    fn left_cat_move_left_out_of_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.movement[0] = true;
+        left_cat.move_cat(right_cat.position[0]);
+        assert_eq!(left_cat.position[0], 0.0);
+    }
+
+    #[test]
+    fn left_cat_move_right_free() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.movement[1] = true;
+        left_cat.move_cat(right_cat.position[0]);
+        assert_eq!(left_cat.position[0], 1.0);
+    }
+
+    #[test]
+    fn left_cat_move_right_blocked() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.movement[1] = true;
+        left_cat.move_cat(right_cat.position[0]);
+        assert_eq!(left_cat.position[0], 100.0);
+    }
+
     #[test]
     fn check_live_left_cat_alive() {
         use cat::Cat;
@@ -206,9 +258,9 @@ mod tests {
         use cat::Cat;
         use cat::LeftCat;
         use cat::RightCat;
-        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let result = catR.attacked(true, 1.0, catL.position[0], catL.position[1]);
+        let left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = right_cat.attacked(true, 1.0, left_cat.position[0], left_cat.position[1]);
         assert_eq!(result, 9.0);
     }
 
@@ -217,9 +269,9 @@ mod tests {
         use cat::Cat;
         use cat::LeftCat;
         use cat::RightCat;
-        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let result = catR.attacked(true, 1.0, catL.position[0], catL.position[1]);
+        let left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = right_cat.attacked(true, 1.0, left_cat.position[0], left_cat.position[1]);
         assert_eq!(result, 10.0);
     }
 
@@ -228,10 +280,10 @@ mod tests {
         use cat::Cat;
         use cat::LeftCat;
         use cat::RightCat;
-        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let result = catR.hissed(catL.position[0], catL.position[1]);
-        assert_eq!(catR.position[0], 130.0);
+        let left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        right_cat.hissed(left_cat.position[0], left_cat.position[1]);
+        assert_eq!(right_cat.position[0], 130.0);
     }
 
     #[test]
@@ -239,10 +291,62 @@ mod tests {
         use cat::Cat;
         use cat::LeftCat;
         use cat::RightCat;
-        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let result = catR.hissed(catL.position[0], catL.position[1]);
-        assert_eq!(catR.position[0], 200.0);
+        let left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let mut right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        right_cat.hissed(left_cat.position[0], left_cat.position[1]);
+        assert_eq!(right_cat.position[0], 200.0);
+    }
+
+    /***************************/
+    /***** Right Cat Tests *****/
+    /***************************/
+    
+     #[test]
+    fn left_cat_move_left_in_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.movement[0] = true;
+        left_cat.move_cat(right_cat.position[0]);
+        assert_eq!(left_cat.position[0], 49.0);
+    }
+
+    #[test]
+    fn left_cat_move_left_out_of_bounds() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.movement[0] = true;
+        left_cat.move_cat(right_cat.position[0]);
+        assert_eq!(left_cat.position[0], 0.0);
+    }
+
+    #[test]
+    fn left_cat_move_right_free() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.movement[1] = true;
+        left_cat.move_cat(right_cat.position[0]);
+        assert_eq!(left_cat.position[0], 1.0);
+    }
+
+    #[test]
+    fn left_cat_move_right_blocked() {
+        use cat::Cat;
+        use cat::LeftCat;
+        use cat::RightCat;
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 1.0, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.movement[1] = true;
+        left_cat.move_cat(right_cat.position[0]);
+        assert_eq!(left_cat.position[0], 100.0);
     }
 
     #[test]
@@ -269,9 +373,9 @@ mod tests {
         use cat::Cat;
         use cat::LeftCat;
         use cat::RightCat;
-        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let result = catL.attacked(true, 1.0, catR.position[0], catR.position[1]);
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = left_cat.attacked(true, 1.0, right_cat.position[0], right_cat.position[1]);
         assert_eq!(result, 9.0);
     }
 
@@ -280,9 +384,9 @@ mod tests {
         use cat::Cat;
         use cat::LeftCat;
         use cat::RightCat;
-        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let result = catL.attacked(true, 1.0, catR.position[0], catR.position[1]);
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let result = left_cat.attacked(true, 1.0, right_cat.position[0], right_cat.position[1]);
         assert_eq!(result, 10.0);
     }
 
@@ -291,10 +395,10 @@ mod tests {
         use cat::Cat;
         use cat::LeftCat;
         use cat::RightCat;
-        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let result = catL.hissed(catR.position[0], catR.position[1]);
-        assert_eq!(catL.position[0], 20.0);
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [50.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [100.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.hissed(right_cat.position[0], right_cat.position[1]);
+        assert_eq!(left_cat.position[0], 20.0);
     }
 
     #[test]
@@ -302,9 +406,9 @@ mod tests {
         use cat::Cat;
         use cat::LeftCat;
         use cat::RightCat;
-        let mut catL: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let mut catR: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
-        let result = catL.hissed(catR.position[0], catR.position[1]);
-        assert_eq!(catL.position[0], 0.0);
+        let mut left_cat: LeftCat = LeftCat::new([1.0, 0.0, 0.0, 1.0], [0.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        let right_cat: RightCat = RightCat::new([1.0, 0.0, 0.0, 1.0], [200.0, 200.0, 50.0, 50.0], [2.0, 0.75, 1.0, 10.0, 10.0], [true, false, false, false, false]);
+        left_cat.hissed(right_cat.position[0], right_cat.position[1]);
+        assert_eq!(left_cat.position[0], 0.0);
     }
 }
