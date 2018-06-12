@@ -7,16 +7,16 @@ Make sure that you replace the existing path to the cat sprites (in main.rc) to 
 Type "cargo build" to build the project, and then "cargo run" to start the game.
 
 ## Gameplay
-Player 1:
-A: Move left
-D: Move right
-W: Jump dodge
-Q: Attack
+### Player 1:
+A: Move left<br/>
+D: Move right<br/>
+W: Jump dodge<br/>
+Q: Attack<br/>
 E: Hiss (sends enemy backwards)
 
-Player 2:
-J: Move left
-L: Move right
-I: Jump dodge
-U: Attack
+### Player 2:
+J: Move left<br/>
+L: Move right<br/>
+I: Jump dodge<br/>
+U: Attack<br/>
 O: Hiss (sends enemy backwards)
