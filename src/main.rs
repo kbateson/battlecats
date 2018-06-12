@@ -75,9 +75,6 @@ impl App {
                 let chester_box_paw = Image::new().rect([square1.position[0]+45.0, square1.position[1]+72.0, 70.0, 20.0]);
                 let gigs_box = Image::new().rect(square(square2.position[0], square2.position[1], 100.0));
                 let gigs_box_paw = Image::new().rect([square2.position[0]-15.0, square2.position[1]+72.0, 70.0, 20.0]);
-                let rhiss_relative = PathBuf::from("./src/imgs/rhiss.png");
-                     
-                chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
                  
                 // bg_box.draw(&bg, &DrawState::default(), c.transform, gl);
                 if square1.stance[2] {
@@ -86,23 +83,20 @@ impl App {
                     let lhiss_relative = PathBuf::from("./src/imgs/lhiss.png");
                     let lhiss_absolute = fs::canonicalize(&lhiss_relative);
                     let lhiss: Texture = Texture::from_path(Path::new(&lhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
-                    
                     let lhiss_box = Image::new().rect(square(square1.position[0]+100.0, square1.position[1], 100.0));
                     let chester_hiss: Texture = Texture::from_path(Path::new(&chester_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                     chester_box.draw(&chester_hiss, &DrawState::default(), c.transform, gl);
                     lhiss_box.draw(&lhiss, &DrawState::default(), c.transform, gl);
                     chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
-                
                 } else {
                     chester_box.draw(&chester, &DrawState::default(), c.transform, gl);
-                    chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
-                
                 }
 
                 if square2.stance[2] {
                     let gigabyte_hiss_relative = PathBuf::from("./src/imgs/gigabytehiss.png");
                     let gigabyte_hiss_absolute = fs::canonicalize(&gigabyte_hiss_relative);
                     let gigabyte_hiss: Texture = Texture::from_path(Path::new(&gigabyte_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
+                    let rhiss_relative = PathBuf::from("./src/imgs/rhiss.png");
                     let rhiss_absolute = fs::canonicalize(&rhiss_relative);
                     let rhiss: Texture = Texture::from_path(Path::new(&rhiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
                     let rhiss_box = Image::new().rect(square(square2.position[0]-100.0, square2.position[1], 100.0));  
@@ -110,11 +104,22 @@ impl App {
                     gigs_box.draw(&gigabyte_hiss, &DrawState::default(), c.transform, gl);
                     rhiss_box.draw(&rhiss, &DrawState::default(), c.transform, gl);
                     gigs_box_paw.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
-                
                 } else {
                     gigs_box.draw(&gigabyte, &DrawState::default(), c.transform, gl);
+                }
+
+                if square1.stance[1] {
+                    let chester_box_paw_swipe = Image::new().rect([square1.position[0]+65.0, square1.position[1]+52.0, 70.0, 20.0]);
+                    chester_box_paw_swipe.draw(&chester_paw, &DrawState::default(), c.transform, gl);
+                } else {
+                    chester_box_paw.draw(&chester_paw, &DrawState::default(), c.transform, gl);
+                }
+
+                if square2.stance[1] {
+                    let gigs_box_paw_swipe = Image::new().rect([square2.position[0]-45.0, square2.position[1]+52.0, 70.0, 20.0]);
+                    gigs_box_paw_swipe.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
+                } else {
                     gigs_box_paw.draw(&gigabyte_paw, &DrawState::default(), c.transform, gl);
-                
                 }
 
                 rectangle(WHITE, outer_health_left, c.transform, gl);
@@ -154,15 +159,15 @@ impl App {
         match args.button {
             Button::Keyboard(Key::O) => {
                 self.player2.hiss();
-                self.player1.hissed(self.player2.position[2], self.player2.position[1]);
+                self.player1.hissed(self.player2.position[0], self.player2.position[1]);
             }
             Button::Keyboard(Key::E) =>{
                 self.player1.hiss();
                 self.player2.hissed(self.player1.position[0] + self.player1.position[2], self.player1.position[1]);
             }
             Button::Keyboard(Key::U) => {
-                let right_cat = 100.0 - (10.0 * self.player2.attack(self.player1.position[0] + self.player1.position[2], self.player1.position[1]));
-                let left_cat = 100.0 - (10.0 * self.player1.attacked(self.player2.stance[1], self.player2.stats[0]));
+                let right_cat = 100.0 - (10.0 * self.player2.attack());
+                let left_cat = 100.0 - (10.0 * self.player1.attacked(self.player2.stance[1], self.player2.stats[0], self.player2.position[0], self.player2.position[1]));
                 self.hud.update(left_cat, right_cat);
             }
             Button::Keyboard(Key::L) => {
@@ -178,8 +183,8 @@ impl App {
                 self.player2.movement[3] = true;
             }
             Button::Keyboard(Key::Q) => {
-                let left_cat = 100.0 - (10.0 * self.player1.attack(self.player2.position[0], self.player2.position[1]));
-                let right_cat = 100.0 - (10.0 * self.player2.attacked(self.player1.stance[1], self.player1.stats[0]));
+                let left_cat = 100.0 - (10.0 * self.player1.attack());
+                let right_cat = 100.0 - (10.0 * self.player2.attacked(self.player1.stance[1], self.player1.stats[0], self.player1.position[0] + self.player1.position[2], self.player1.position[1]));
                 self.hud.update(left_cat, right_cat);
             }
             Button::Keyboard(Key::D) => {
