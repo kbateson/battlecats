@@ -100,7 +100,6 @@ impl App {
                 }
 
                 if square2.stance[2] {
-                    println!("gigs hiss!");
                     let gigabyte_hiss_relative = PathBuf::from("./src/imgs/gigabytehiss.png");
                     let gigabyte_hiss_absolute = fs::canonicalize(&gigabyte_hiss_relative);
                     let gigabyte_hiss: Texture = Texture::from_path(Path::new(&gigabyte_hiss_absolute.unwrap()), &TextureSettings::new()).unwrap();
@@ -155,11 +154,11 @@ impl App {
         match args.button {
             Button::Keyboard(Key::O) => {
                 self.player2.hiss();
-                self.player1.hissed(self.player2.position[2], self.player2.position[1], self.player2.stance[2]);
+                self.player1.hissed(self.player2.position[2], self.player2.position[1]);
             }
             Button::Keyboard(Key::E) =>{
                 self.player1.hiss();
-                self.player2.hissed(self.player1.position[0] + self.player1.position[2], self.player1.position[1], self.player1.stance[2]);
+                self.player2.hissed(self.player1.position[0] + self.player1.position[2], self.player1.position[1]);
             }
             Button::Keyboard(Key::U) => {
                 let right_cat = 100.0 - (10.0 * self.player2.attack(self.player1.position[0] + self.player1.position[2], self.player1.position[1]));
